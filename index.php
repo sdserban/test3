@@ -21,15 +21,20 @@ define(VISIBILITY_AUTH,   1);
 define(VISIBILITY_ADMIN,  8);
 define(VISIBILITY_NONE,   9);
 
+define(ALLOW_PASSWORD_RECOVERY, false);
+
 // section include 
 include_once(CONFIG_FOLDER . 'db.config.php');
-include_once(LIBS_FOLDER . 'tools.php');
+
+include_once(LIBS_FOLDER .   'tools.php');
+
 include_once(MODELS_FOLDER . 'db.class.php');
 include_once(MODELS_FOLDER . 'table.class.php');
 include_once(MODELS_FOLDER . 'user.class.php');
 
 //  pages & menu description
 $pages = array( // visibility = public | auth | admin
+    array('label'=>'wellcome', 'visibility_level' => VISIBILITY_PUBLIC,  'content'=>'welcome.html.php'),
     array('label'=>'licenses', 'visibility_level' => VISIBILITY_AUTH,  'content'=>'licenses.html.php'),
     array('label'=>'clients',  'visibility_level' => VISIBILITY_AUTH,  'content'=>'clients.html.php'),
     array('label'=>'modules',  'visibility_level' => VISIBILITY_AUTH,  'content'=>'modules.html.php'),
@@ -39,9 +44,19 @@ $userLevel = VISIBILITY_PUBLIC;
 $siteNeedsLogin = siteNeedsLogin($pages);
 if($siteNeedsLogin) {
     // user restore
-    $userID = (isset($_SESSION['userId']) ? $_SESSION['userId'] : null);
-    $user = new User($userId);
-    $userLevel = $user->getLevel();
+    $userId = (isset($_SESSION['userId']) ? $_SESSION['userId'] : null);
+    if(isset($_POST) && isset($_POST['logout']) && ($_POST['logout'] = 'logout')) {
+        $userId = null;
+        unset($_SESSION['userId']);
+    }
+    $user = new User($userId); 
+ 
+    if(isset($_POST) && isset($_POST['login']) && ($_POST['login'] == 'login')) {
+        if($user->doAuth($_POST['user_name_or_email'], $_POST['user_pwd'])){
+            $userId = $user->getId();
+            $_SESSION['userId'] = $userId;
+        }
+    }
 }
 
 // select active page
@@ -54,10 +69,5 @@ foreach($pages as $page) {
     }
 }
 
-// database
-$db = new Db();
-if(!$db->is_connected()) die("Error!: db is not connected!");
-
 // views
 include(VIEWS_FOLDER . 'index.html.php');
-
