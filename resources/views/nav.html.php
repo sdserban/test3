@@ -1,7 +1,7 @@
 <nav class="nav navbar navbar-expand-lg navbar-light bg-light sticky-top container-fullwidth d-flex" role="navigation">
     <div class="container"> 
         <a class="navbar-brand" target="_blank" rel="noopener noreferrer" href="https://activepublishing.fr/fr/accueil">
-            <img src="/resources/images/logo.png" alt="Active Publishing" width="300px" height="auto" />
+            <img src="./resources/images/logo.png" alt="Active Publishing" width="300px" height="auto" />
         </a>
         <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar">
             &#9776;
@@ -10,14 +10,17 @@
             <ul class="nav navbar-nav ml-auto">
                 <?php
                 foreach($pages as $page) {
-                    if($page['visibility_level'] <= $user->getLevel()) {
+                    if($page['is_menu_item'] && ($page['visibility_level'] <= $user->getLevel())) {
                         ?>
                             <li class="nav-item">
-                                <input type="submit" 
-                                   name="page" 
-                                   class="btn btn-outline-secondary mx-1 my-1" 
-                                   value="<?= (isset($page['label']) && is_string($page['label']) ? $page['label'] : 'not set');?>" 
-                                   />
+                                <form class="form" role="form" method="post">
+                                    <input type="hidden" name ="action" value="List" />
+                                    <input type="submit" 
+                                       name="active_page" 
+                                       class="btn btn-outline-secondary mx-1 my-1" 
+                                       value="<?= (isset($page['label']) && is_string($page['label']) ? $page['label'] : 'not set');?>" 
+                                       />
+                                </form>
                             </li>
                         <?php
                     }

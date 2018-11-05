@@ -44,7 +44,6 @@
             try{
                 $this->connection = new PDO('mysql:host='.$this->dbhost.';dbname='.$this->dbname, $this->dbuser, $this->dbpass);
                 $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             // Error handling
             }catch(PDOException $e){
                 die("Failed to connect to DB: ". $e->getMessage());
@@ -56,11 +55,23 @@
             return $this->connection;
         }
         
+        public function getAllRecords($table) {
+            if($this->tableExist($table)) {
+                try {
+                    $stmt = $this->connection->prepare("SELECT * FROM $table");
+                    $stmt->execute();
+            
+                    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    die("Failed to query DB: " . $e->getMessage());
+                }
+            }
+        }
+        
         public function getById($id, $table) {
             if($this->tableExist($table)) {
                 if(!is_null($id)) {
                     try {
-                        //
                         $stmt = $this->connection->prepare("SELECT * FROM $table WHERE id=:id");
                         $stmt->bindparam(":id", strtolower(trim($id)));
                         $stmt->execute();
@@ -73,17 +84,107 @@
             }
         }
         
+        public function deleteById($id, $table) {
+            if($this->tableExist($table)) {
+                if(!is_null($id)) {
+                    try {
+                        $stmt = $this->connection->prepare("DELETE FROM $table WHERE id=:id");
+                        $stmt->bindparam(":id", strtolower(trim($id)));
+                        $stmt->execute();
+                        
+                        return true;
+                    } catch(PDOException $e) {
+                        die("Failed to query DB: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+        
+        public function addRecord($record, $table) {
+            if(is_array($record) && is_string($table)) {
+                if((count($record) > 0) && $this->tableExist($table)){
+                    $fields = array();
+                    $values = array();
+                    foreach($record as $field => $value) {
+                        array_push($fields, $field);
+                        if(is_null($value)) {
+                            array_push($values, "null");
+                        } else if(is_bool($value)) {
+                            array_push($values, ($value ? "true" : "false"));
+                        } else {
+                            array_push($values, '"' . $value . '"');
+                        }
+                    }
+                    $sqlPrepare = "INSERT INTO $table (" . implode(', ', $fields) . ") VALUES (" . implode(", ", $values) . ")";
+                    try {
+                        $stmt = $this->connection->prepare($sqlPrepare);
+                        $stmt->execute();
+                        
+                        return true;
+                    } catch(PDOException $e) {
+                        die("Failed to query DB: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+        
+        public function updateRecord($id, $record, $table) {
+            if(!is_null($id) && is_array($record) && is_string($table)) {
+                if((count($record) > 0) && $this->tableExist($table)){
+                    $fields = array();
+                    foreach($record as $field => $value) {
+                        if(is_null($value)) {
+                            array_push($fields, $field . "=null ");
+                        } else if(is_bool($value)) {
+                            array_push($fields, $field . ($value ? "=true " : "=false "));
+                        } else {
+                            array_push($fields, $field . "='" . $value ."' ");
+                        }
+                    }
+                    $sqlPrepare = "UPDATE $table SET " . implode(', ', $fields) . "WHERE id=$id";
+                    try {
+                        $stmt = $this->connection->prepare($sqlPrepare);
+                        $stmt->execute();
+                        
+                        return true;
+                    } catch(PDOException $e) {
+                        die("Failed to query DB: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+        
+        public function recordExist($field, $value, $table) {
+            if(is_string($field) && is_string($value) && is_string($table)) {
+                try {
+                    $stmt = $this->connection->prepare("SELECT $field FROM $table WHERE $field=:value");
+                    $stmt->bindparam(":value", $value);
+                    $stmt->execute();
+                        
+                    return count($stmt->fetchAll(PDO::FETCH_ASSOC)) > 0;
+                } catch (Exception $e) {
+                    // We got an exception == table not found
+                    return false;
+                }
+
+                // Result is either boolean FALSE (no table found) or PDOStatement Object (table found)
+                return true;
+            }
+            
+            return false;
+        }
+        
         public function tableExist($table) {
             if(is_string($table)) {
                 try {
                     $result = $this->connection->query("SELECT 1 FROM $table LIMIT 1");
                 } catch (Exception $e) {
                     // We got an exception == table not found
-                    return FALSE;
+                    return false;
                 }
 
                 // Result is either boolean FALSE (no table found) or PDOStatement Object (table found)
-                return $result !== FALSE;
+                return $result !== false;
             }
             
             return false;

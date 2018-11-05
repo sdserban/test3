@@ -17,22 +17,21 @@
 <body>
     <script>
         $(document).ready(function() {
-            $('#example').DataTable();
+            $('#navtable').DataTable();
         } );
     </script>
 
     <?php 
-        include VIEWS_FOLDER . "nav.html.php"; 
+        include(VIEWS_FOLDER . "nav.html.php");         
     ?>
 
     <div class="container my-3">
-        <h4><?= ucfirst($activePageLabel) ;?></h4>
-        
         <?php
-        if(file_exists(VIEWS_FOLDER . $pages[$activePage]['content'])) {
-            include($activePage['content']);
+        
+        if(file_exists(CONTROLLERS_FOLDER . $activePage['controller'])) {
+            include(CONTROLLERS_FOLDER . $activePage['controller']);
         } else {
-            die('content view does not exist: ' . VIEWS_FOLDER . $activePage['content']);
+            die('content view does not exist: ' . CONTROLLERS_FOLDER . $activePage['controller']);
         }
         ?>
     </div>
