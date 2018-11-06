@@ -43,7 +43,7 @@ $pages = array( // visibility = public | auth | admin
     array('label'=>'welcome',  'is_menu_item' => false, 'visibility_level' => VISIBILITY_PUBLIC, 'controller'=>'welcome.php'),
     array('label'=>'licenses', 'is_menu_item' => true,  'visibility_level' => VISIBILITY_AUTH,   'controller'=>'licenses.php'),
     array('label'=>'clients',  'is_menu_item' => true,  'visibility_level' => VISIBILITY_AUTH,   'controller'=>'clients.php'),
-    array('label'=>'modules',  'is_menu_item' => true,  'visibility_level' => VISIBILITY_AUTH,   'controller'=>'modules.php'),
+    array('label'=>'modules',  'is_menu_item' => true,  'visibility_level' => VISIBILITY_ADMIN,   'controller'=>'modules.php'),
     array('label'=>'users',    'is_menu_item' => true,  'visibility_level' => VISIBILITY_ADMIN,  'controller'=>'users.php'));
 
 $userLevel = VISIBILITY_PUBLIC;

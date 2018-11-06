@@ -33,7 +33,7 @@ if(count($errors) > 0) {
             <div class="form-group d-flex">
                 <label class="control-label col-sm-3 my-auto" for="details">Details</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="details" name="details" value="<?= isset($_POST['details']) ? $_POST['details'] : '';?>" placeholder="Module name" />
+                    <input type="text" class="form-control" id="details" name="details" value="<?= isset($_POST['details']) ? $_POST['details'] : '';?>" placeholder="Details" />
                 </div>
             </div>
             <div class="form-group d-flex">

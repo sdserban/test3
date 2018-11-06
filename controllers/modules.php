@@ -25,7 +25,7 @@ if (isset($_POST['confirmation'])) {
             //code
             if(!isset($_POST['code']) || is_null($_POST['code']) || ($_POST['code'] == '')) {
                 array_push($errors, 'Code is mandatory');
-            } elseif($db->recordExist('code', $_POST['code'], 'modules_list')) {
+            } elseif($db->recordExists('code', $_POST['code'], 'modules_list')) {
                     array_push($errors, 'Module code "' . $_POST['code'] .'" is already used');
             } else {
                 $record['modulecode'] = $_POST['code'];

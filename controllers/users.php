@@ -25,7 +25,7 @@ if (isset($_POST['confirmation'])) {
             //username
             if(!isset($_POST['username']) || is_null($_POST['username']) || ($_POST['username'] == '')) {
                 array_push($errors, 'Username is mandatory');
-            } else if($db->recordExist('username', $_POST['username'], 'users')) {
+            } else if($db->recordExists('username', $_POST['username'], 'users')) {
                 array_push($errors, 'Username "' . $_POST['username'] .'" is already used');
             } else {
                 $record['username'] = $_POST['username'];
@@ -37,7 +37,7 @@ if (isset($_POST['confirmation'])) {
             //email
             if(!isset($_POST['mail']) || is_null($_POST['mail']) || ($_POST['mail'] == '')) {
                 array_push($errors, 'Email is mandatory');
-            } else if($db->recordExist('mail', $_POST['mail'], 'users')) {
+            } else if($db->recordExists('mail', $_POST['mail'], 'users')) {
                 array_push($errors, 'Email "' . $_POST['mail'] .'" is already used');
             } else {
                 $record['mail'] = $_POST['mail'];
@@ -61,7 +61,7 @@ if (isset($_POST['confirmation'])) {
             //username
             if(!isset($_POST['username']) || is_null($_POST['username']) || ($_POST['username'] == '')) {
                 array_push($errors, 'Username is mandatory');
-            } else if($db->recordExist('username', $_POST['username'], 'users')) {
+            } else if($db->recordExists('username', $_POST['username'], 'users', $_POST['id'])) {
                 array_push($errors, 'Username "' . $_POST['username'] .'" is already used');
             } else {
                 $record['username'] = $_POST['username'];
@@ -73,7 +73,7 @@ if (isset($_POST['confirmation'])) {
             //email
             if(!isset($_POST['mail']) || is_null($_POST['mail']) || ($_POST['mail'] == '')) {
                 array_push($errors, 'Email is mandatory');
-            } else if($db->recordExist('mail', $_POST['mail'], 'users')) {
+            } else if($db->recordExists('mail', $_POST['mail'], 'users', $_POST['id'])) {
                 array_push($errors, 'Email "' . $_POST['mail'] .'" is already used');
             } else {
                 $record['mail'] = $_POST['mail'];
@@ -81,12 +81,12 @@ if (isset($_POST['confirmation'])) {
             //Password
             if(isset($_POST['password']) && isset($_POST['confirmpassword']) && ($_POST['password'] != $_POST['confirmpassword'])) {
                 array_push($errors, "Password confirmation don't match");
-            } else if(!is_null($_POST['password'])) {
+            } else if($_POST['password'] != "") {
                 $record['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
             }
             //write to db
             if(count($errors) == 0) {
-                $db->updateRecord($_POST['id'], $record, 'modules');
+                $db->updateRecord($_POST['id'], $record, 'users');
                 $_POST['action'] = 'List';
             }
             break;

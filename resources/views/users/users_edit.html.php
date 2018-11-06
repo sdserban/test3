@@ -26,6 +26,7 @@ if(count($errors) > 0) {
         <form method="post" class="form-horizontal">
             <input type="hidden" name="active_page" value="users" />
             <input type="hidden" name="action" value="Add new" />
+            <input type="hidden" name="id" value="<?= $_POST['id']; ?>" />
             <div class="form-group d-flex">
                 <label class="control-label col-sm-3 my-auto" for="userName">Username</label>
                 <div class="col-sm-9">
@@ -79,7 +80,7 @@ if(count($errors) > 0) {
                     <button type="submit" value="List" name="action" class="btn btn-default">Cancel</button>
                 </div>
                 <div class="col-sm-1">
-                    <input type="submit" value="Save" name="confirmation" class="btn btn-primary" />
+                    <input type="submit" value="Update" name="confirmation" class="btn btn-primary" />
                 </div>
             </div>
         </form>
